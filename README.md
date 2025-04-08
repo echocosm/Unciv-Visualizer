@@ -12,7 +12,7 @@
 
 
 ## Table Of Content
-- [What Is?](#what%20is)
+- [What Is](#what%20is)
 - [Features](#features)
     - [Techs](#tech)
 - [Roadmap](#roadmap)
@@ -21,7 +21,7 @@
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
-## What Is?
+## What Is
 
 Google Apps Script HTML wrapper to display the information from unciv JSON files
 
