@@ -14,20 +14,26 @@
 ## Table Of Content
 - [Overview](#overview)
 - [Features](#features)
-    - [Techs](#tech)
+    - [Technology_Tree](#technology_tree)
+    - [Policy_Tree](#policy_tree)
 - [Roadmap](#roadmap)
 - [Authors](#authors)
 - [Version_Hisory](#version_history)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
-## What Is
+## Overview
 
 Google Apps Script HTML wrapper to display the information from unciv JSON files
 
 ## Features
 
-### Techs
+### Technology_Tree
+
+>display tech tree with lines
+>tech details popups
+
+### Policy_Tree
 
 ## Roadmap
 
