@@ -12,12 +12,12 @@
 
 
 ## Table Of Content
-- [What Is?](#what_is)
+- [What Is?](#what%20is)
 - [Features](#features)
     - [Techs](#tech)
 - [Roadmap](#roadmap)
 - [Authors](#authors)
-- [Version Hisory](#version_history)
+- [Version Hisory](#version history)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
