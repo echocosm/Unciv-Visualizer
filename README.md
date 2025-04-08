@@ -17,7 +17,7 @@
     - [Techs](#tech)
 - [Roadmap](#roadmap)
 - [Authors](#authors)
-- [Version Hisory](#versionhistory)
+- [Version Hisory](#version_history)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
@@ -37,11 +37,11 @@ echocosm
 
 ## Version History
 
-## [/License]
+## License
 
 This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
 
-## [/Acknowledgments]
+## Acknowledgments
 
 Inspiration, code snippets, etc.
 * [awesome-readme](https://github.com/matiassingers/awesome-readme)
