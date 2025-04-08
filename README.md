@@ -35,7 +35,7 @@ Google Apps Script HTML wrapper to display the information from unciv JSON files
 
 echocosm
 
-## Version History
+## Version_History
 
 ## License
 
