@@ -30,8 +30,15 @@ Google Apps Script HTML wrapper to display the information from unciv JSON files
 
 ### Technology_Tree
 
->display tech tree with lines
->tech details popups
+#### Implemented
+
+display tech tree with lines
+tech details popups
+
+#### To_Do
+
+after opening showTechDetails() popup, hovered border and line thickness doesn't persist
+rewrite showTechDetails() to utilize createTechItem()
 
 ### Policy_Tree
 
