@@ -116,6 +116,7 @@
 
     async function getImageByNameFromFolder(folder, name) {
       try {
+
         const res = await fetch(`icons/${folder}/${name}`);
         if (!res.ok) throw new Error(`Image not found: ${name}`);
         return getImageAsBase64(await res.blob());

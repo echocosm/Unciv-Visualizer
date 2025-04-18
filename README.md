@@ -14,45 +14,32 @@
 ## Table Of Content
 - [Overview](#overview)
 - [Features](#features)
-    - [Technology_Tree](#technology_tree)
-    - [Policy_Tree](#policy_tree)
-- [Roadmap](#roadmap)
 - [Authors](#authors)
-- [Version_Hisory](#version_history)
-- [License](#license)
 - [Acknowledgments](#acknowledgments)
 
 ## Overview
 
 Google Apps Script HTML wrapper to display the information from unciv JSON files
 
-## Features
+building tree, policy tree
 
-### Technology_Tree
+## Features
 
 #### Implemented
 
 display tech tree with lines
 tech details popups
+loads and colors images
+runs on local server
 
 #### To_Do
 
-after opening showTechDetails() popup, hovered border and line thickness doesn't persist
-rewrite showTechDetails() to utilize createTechItem()
-
-### Policy_Tree
-
-## Roadmap
+recolor box around nations
+add top menu bar
 
 ## Authors
 
 echocosm
-
-## Version_History
-
-## License
-
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
 
 ## Acknowledgments
 
