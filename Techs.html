@@ -1,230 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <style>
-      body {
-        font-family: "Roboto", system-ui;
-        font-style: normal;
-      }
-      .tech-tree-container {
-        display: flex;
-        justify-content: flex-start;
-        flex-wrap: nowrap;
-        //padding: 40px;
-        background-color: white;
-        position: relative;
-        pointer-events: auto; /* Default state allows interaction */
-      }
-      .tech-tree-container.freeze {
-        pointer-events: none; /* Default state allows interaction */
-      }
-      .tech-era-header-group {
-        display: flex;
-        flex-direction: column;
-        //margin-bottom: 40px;
-        width: 100%;
-        background-color: white;
-      }
-      .tech-era-header {
-        font-size: 28px;
-        font-weight: bold;
-        text-align: center;
-      }
-      .tech-era-group-container {
-        display: flex;
-        flex-direction: row;
-        position: relative;
-      }
-      .tech-column {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 30px;
-        min-width: 200px;
-        position: relative;
-        height: 550px;
-      }
-      #tree-branch:hover, #tree-branch:active  {
-        background-color: #aaffff;
-        border:medium solid cyan;
-        transition: background-color 0.3s, border 0.3s;
-        text-shadow: 2px 2px 1px cyan;
-      }
-      #tree-branch {
-        width: 160px;
-        height: 40px;
-      }
-      .techboxitem {
-        border: medium solid blue;
-        background-color: #72bcd3;
-        margin: 5px; //for some reason this only effects it inside the popup
-        padding: 1px;//30px;
-        border-radius: 5px;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: left;
-        align-items: center;
-        z-index: 3;
-      }
-      .tech-popup {
-        display: none;
-        position: fixed;
-        top: 0%;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 800px;
-        padding: 20px;
-        background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        height: 750px;
-        overflow-y: auto;
-        z-index: 10;
-        align-items: center;
-        transition: background-color 0.3s, border-color 0.3s;
-      }
-      .line {
-        position: absolute;
-        background-color: blue;
-        width: 4px;
-        height: 4px;
-        z-index: 1;
-        border-radius: 2px;
-        align: center;
-        justify: center;
-        transition: background-color 0.3s, border-color 0.3s;
-      }
-      .line-hovered {
-        background-color: cyan;
-        z-index: 2;
-        transition: background-color 0.3s, border-color 0.3s;
-      }
-      .no-hover .techboxitem {
-        pointer-events: none;
-      }
-      .no-hover .techboxitem.hovered, .no-hover .line-hovered {
-        background-color: #aaffff;
-        border-color: cyan;
-      }
-      .close-btn {
-        border: medium solid blue;
-        background-color: #72bcd3;
-        border-radius: 5px;
-        margin: 5px 0;
-        padding: 10px;
-        font-size: 16px;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        z-index: 10;
-        cursor: pointer;
-        transition: background-color 0.3s, border-color 0.3s;
-      }
-      .close-btn:hover {
-        background-color: #aaffff;
-        border-color: cyan;
-        text-shadow: 2px 2px 1px cyan;
-        transition: background-color 0.3s, border-color 0.3s;
-      }
-      .blank {
-        display: flex;
-        flex-direction: row;
-        margin: 0px ;
-        padding: 0px;
-        text-align: center;
-        align-items: center;
-      }
-      .token-container {
-        width: 30px;
-        height: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50%;
-        border: 2px solid white;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        margin: 5px;
-      }
-      .tech-icon {
-        width: 20px;
-        height: 20px;
-      }
-      .tech-name {
-        display: flex;
-        margin: 5px;
-        white-space: nowrap; /* Prevent text wrapping */
-        overflow: hidden; /* Prevent overflow */
-        text-overflow: ellipsis; /* Ellipsis if text overflows */
-        align-items: flex-start;
-        font-size: 12px;
-      }
-
-      /* === BLANK === */
-      .blank-style-box   {width: auto; justify-content: space-between; flex-direction: row; margin: 0px; padding: 0px; background-color: transparent; border-color: transparent; box-shadow: none}
-      /* === QUOTE === */
-      .quote-style-box   { flex-wrap: wrap; width: 100%; }
-      .quote-style-text {
-        font-style: italic;
-        font-size: 18px;
-        white-space: normal;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        text-align: center;}
-
-
-
-      /* === NEGATIVE === */
-      .negative-style-token { border-color: black; background-color: white; }
-
-      /* === SCIENCE === */
-      .science-style-box   { border-color: blue; background-color: #72bcd3; }
-      .science-style-token { border-color: blue; background-color: white; }
-      .science-style-text  { border-color: white; background-color: transparent; }
-
-      /* === BLUE === */
-      .blue-style-box   { border-color: blue; background-color: #72bcd3; }
-      .blue-style-token { border-color: blue; background-color: #72bcd3; }
-      .blue-style-text  { color: black; background-color: transparent; }
-
-      /* === YELLOW (Brighter) === */
-      .yellow-style-box   { border-color: #f1c40f; background-color: #fff9c4; }
-      .yellow-style-token { border-color: #f1c40f; background-color: #fff9c4; }
-      .yellow-style-text  { color: #b38f00; }
-
-      /* === ORANGE === */
-      .orange-style-box   { border-color: #ff7f0e; background-color: #ffe5cc; }
-      .orange-style-token { border-color: #ff7f0e; background-color: #ffe5cc; }
-      .orange-style-text  { color: #cc6600; }
-
-      /* === PURPLE === */
-      .purple-style-box   { border-color: #7e3ff2; background-color: #ebd9ff; }
-      .purple-style-token { border-color: #7e3ff2; background-color: #ebd9ff; }
-      .purple-style-text  { color: #4b179c; }
-
-      /* === RED === */
-      .red-style-box   { border-color: #d72f2f; background-color: #ffd6d6; }
-      .red-style-token { border-color: #d72f2f; background-color: #ffd6d6; }
-      .red-style-text  { color: #a11a1a; }
-
-      /* === GREEN === */
-      .green-style-box   { border-color: #2f9e44; background-color: #d8f5e0; }
-      .green-style-token { border-color: #2f9e44; background-color: #d8f5e0; }
-      .green-style-text  { color: #1c6b2c; }
-
-      /* === GREY === */
-      .grey-style-box   { border-color: #6c757d; background-color: #e9ecef; }
-      .grey-style-token { border-color: #6c757d; background-color: #e9ecef; }
-      .grey-style-text  { color: #343a40; }
-
-
-    </style>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <div id="techTree" class="tech-tree-container"></div>
-    <div id="techPopup" class="tech-popup"></div>
+    <div id="techTree"></div>
+    <div id="techPopup"></div>
 
     <script>
 
@@ -249,7 +30,7 @@
       for (const group of techsData) {
         await delay(1)
         if (group.era !== lastEra) {
-          eraHeaderGroup = document.createElement('div');
+          eraHeaderGroup = document.createElement('div') 
           eraHeaderGroup.classList.add('tech-era-header-group');
           const eraHeader = document.createElement('div');
           eraHeader.classList.add('tech-era-header');
@@ -426,7 +207,7 @@
 
     //SHOW TECH DETAILS
     function showTechDetails(tech, group, techItem) {
-      document.querySelector('.tech-tree-container').classList.add('freeze');
+      document.getElementById('techTree').classList.add('freeze');
       techItem.classList.add('hovered');
 
     const techpopup = document.getElementById('techPopup'); //techEra
@@ -550,7 +331,7 @@ function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, overrid
       selectedTechItem?.classList.remove('hovered');
       document.body.classList.remove('no-hover');
       document.querySelectorAll('.line').forEach(line => line.classList.remove('line-hovered'));
-      document.querySelector('.tech-tree-container').classList.remove('freeze');
+      document.getElementById('techTree').classList.remove('freeze');
     }
     loadJsonFiles().then(() => {
     createTechTree()});

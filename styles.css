@@ -1,0 +1,252 @@
+    body {
+    font-family: "Roboto", system-ui;
+    font-style: normal;
+    margin:0;
+  }
+  #techTree {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    background-color: white;
+    position: relative;
+    pointer-events: auto;
+  }
+  #techTree.freeze {
+    pointer-events: none;
+  }
+  #tech-era-header-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: white;
+  }
+  .tech-era-header {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+  }
+  .tech-era-group-container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+  }
+  .tech-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    min-width: 200px;
+    position: relative;
+    height: 100vh;
+  }
+  #tree-branch:hover, #tree-branch:active  {
+    background-color: #aaffff;
+    border:medium solid cyan;
+    transition: background-color 0.3s, border 0.3s;
+    text-shadow: 2px 2px 1px cyan;
+  }
+  #tree-branch {
+    width: 160px;
+    height: 40px;
+  }
+  .techboxitem {
+    border: medium solid blue;
+    background-color: #72bcd3;
+    margin: 5px;
+    padding: 1px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: left;
+    align-items: center;
+    z-index: 3;
+  }
+  #techPopup {
+    display: none;
+    position: fixed;
+    top: 1%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60vw;
+    padding: 20px 44px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    height: 90vh;
+    overflow-x:hidden;
+    overflow-y: auto;
+    z-index: 10;
+    align-items: center;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .line {
+    position: absolute;
+    background-color: blue;
+    width: 4px;
+    height: 4px;
+    z-index: 1;
+    border-radius: 2px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .line-hovered {
+    background-color: cyan;
+    z-index: 2;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .no-hover .techboxitem {
+    pointer-events: none;
+  }
+  .no-hover .techboxitem.hovered, .no-hover .line-hovered {
+    background-color: #aaffff;
+    border-color: cyan;
+  }
+  .close-btn {
+    border: medium solid blue;
+    background-color: #72bcd3;
+    border-radius: 5px;
+    margin: 5px 5px;
+    padding: 10px;
+    font-size: 16px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 10;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .close-btn:hover {
+    background-color: #aaffff;
+    border-color: cyan;
+    text-shadow: 2px 2px 1px cyan;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .blank {
+    display: flex;
+    flex-direction: row;
+    margin: 0px ;
+    padding: 0px;
+    text-align: center;
+    align-items: center;
+  }
+  .token-container {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 5px;
+  }
+  .tech-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .tech-name {
+    display: flex;
+    margin: 5px;
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Prevent overflow */
+    text-overflow: ellipsis; /* Ellipsis if text overflows */
+    align-items: flex-start;
+    font-size: 12px;
+  }
+
+  /* === BLANK === */
+  .blank-style-box   {
+    width: 100%; 
+    justify-content: space-between; 
+    flex-direction: row; margin: 0px; 
+    padding: 0px; 
+    background-color: 
+    transparent; 
+    border-color: transparent; 
+    box-shadow: none}
+  /* === QUOTE === */
+  .quote-style-box   { flex-wrap: wrap; width: 100%; justify-content: center; }
+  .quote-style-text {
+    font-style: italic;
+    font-size: 18px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: center;}
+
+
+
+  /* === NEGATIVE === */
+  .negative-style-token { border-color: black; background-color: white; }
+
+  /* === SCIENCE === */
+  .science-style-box   { border-color: blue; background-color: #72bcd3; }
+  .science-style-token { border-color: blue; background-color: white; }
+  .science-style-text  { border-color: white; background-color: transparent; }
+
+  /* === BLUE === */
+  .blue-style-box   { border-color: blue; background-color: #72bcd3; }
+  .blue-style-token { border-color: blue; background-color: #72bcd3; }
+  .blue-style-text  { color: black; background-color: transparent; }
+
+  /* === YELLOW (Brighter) === */
+  .yellow-style-box   { border-color: #f1c40f; background-color: #fff9c4; }
+  .yellow-style-token { border-color: #f1c40f; background-color: #fff9c4; }
+  .yellow-style-text  { color: #b38f00; }
+
+  /* === ORANGE === */
+  .orange-style-box   { border-color: #ff7f0e; background-color: #ffe5cc; }
+  .orange-style-token { border-color: #ff7f0e; background-color: #ffe5cc; }
+  .orange-style-text  { color: #cc6600; }
+
+  /* === PURPLE === */
+  .purple-style-box   { border-color: #7e3ff2; background-color: #ebd9ff; }
+  .purple-style-token { border-color: #7e3ff2; background-color: #ebd9ff; }
+  .purple-style-text  { color: #4b179c; }
+
+  /* === RED === */
+  .red-style-box   { border-color: #d72f2f; background-color: #ffd6d6; }
+  .red-style-token { border-color: #d72f2f; background-color: #ffd6d6; }
+  .red-style-text  { color: #a11a1a; }
+
+  /* === GREEN === */
+  .green-style-box   { border-color: #2f9e44; background-color: #d8f5e0; }
+  .green-style-token { border-color: #2f9e44; background-color: #d8f5e0; }
+  .green-style-text  { color: #1c6b2c; }
+
+  /* === GREY === */
+  .grey-style-box   { border-color: #6c757d; background-color: #e9ecef; }
+  .grey-style-token { border-color: #6c757d; background-color: #e9ecef; }
+  .grey-style-text  { color: #343a40; }
+
+
+
+  /***** Index styling *****/
+
+
+#index-body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 100px;
+}
+h1 {
+    font-size: 3em;
+}
+.button {
+    background-color: rgb(88, 88, 216);
+    border: none;
+    color: white;
+    padding: 20px 40px;
+    font-size: 2em;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+}
+.button:hover {
+    background-color: #45a049;
+}
+
+
+/**** end index ******/
