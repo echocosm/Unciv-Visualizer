@@ -25,41 +25,32 @@
       container.innerHTML = '';
       document.body.style.overflowX = 'hidden';
 
-      let lastEra = "", eraHeaderGroup, eraGroupContainer, isLightBlue = true;
+      let lastEra = "", eraHeaderGroup, eraColCont, positionTop, isLightBlue = true;
       loadJsonFiles();
       for (const group of techsData) {
         await delay(1)
         if (group.era !== lastEra) {
           eraHeaderGroup = document.createElement('div') 
-          eraHeaderGroup.classList.add('tech-era-header-group');
-          const eraHeader = document.createElement('div');
-          eraHeader.classList.add('tech-era-header');
+          const eraHeader=Object.assign(document.createElement('div'),{className:'techEraHead'});
           eraHeader.innerText = group.era;
           eraHeader.style.backgroundColor = isLightBlue ? 'lightblue' : '#c0eaf7';
           eraHeaderGroup.appendChild(eraHeader);
-          eraGroupContainer = document.createElement('div');
-          eraGroupContainer.classList.add('tech-era-group-container');
-          eraGroupContainer.id = "line-holder"
-          eraHeaderGroup.appendChild(eraGroupContainer);
+          eraColCont=Object.assign(document.createElement('div'),{className:'techColCont'});
+          eraHeaderGroup.appendChild(eraColCont);
           container.appendChild(eraHeaderGroup);
           lastEra = group.era;
           isLightBlue = !isLightBlue;
         }
-
-        const column = document.createElement('div');
-        column.classList.add('tech-column');
+        const column = Object.assign(document.createElement('div'),{className:'techCol'});
         column.style.backgroundColor = isLightBlue ? 'lightblue' : '#c0eaf7';
 
-        let positionTop = 0; // Start with an initial top position
-
         for (const tech of group.techs || []) {
-          // Create the techItem and pass the vertical position
           await delay(1)
-          const techItem = createTechItem("TechIcons",tech.name,tech.name,"blue",column,(tech.row*50)-50,null,null,"blue"); //#72bcd3
-          techItem.id = "tree-branch"
+          techItem=createTechItem('TechIcons',tech.name,tech.name,'blue',column,(tech.row*50)-50,null,null,'blue'); //#72bcd3
+          techItem.classList.add('treeBranch');
           techItem.addEventListener('click', () => showTechDetails(tech, group, techItem));
         }
-        eraGroupContainer.appendChild(column);
+        eraColCont.appendChild(column);
       }
       await delay(1);
       drawLinesForAllTechs();
@@ -81,7 +72,7 @@
           line.classList.add('line');
           Object.assign(line.style, style);
           line.dataset.connectedTech = connectedTech;
-          document.getElementById('line-holder').appendChild(line)};
+          document.querySelector('.techColCont').appendChild(line)};
         if (Math.abs(startY - endY) < 10) {
           createLine({ left: `${Math.min(startX, endX)}px`, top: `${startY}px`, width: `${Math.abs(endX - startX)}px`});
         } else {
@@ -184,14 +175,12 @@
             imageContainer.appendChild(img);
             techItem.appendChild(imageContainer);
           }
-
           if (["token", "token2"].includes(target)) {
             applyInlineStyle(imageContainer, styleOptions);
           }
           addStyleClass(imageContainer, style, "token");
         });
       }
-
 
       if (techName) {
         const nameEl = createElement('div', 'tech-name', techName);
