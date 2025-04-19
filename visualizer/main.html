@@ -94,7 +94,7 @@
             if (techItem1 && techItem2){drawLineBetweenTechs(techItem1, techItem2)}})})})};
 
     function addHoverEffectToTechItems() {
-      document.querySelectorAll('.techboxitem[id="tree-branch"]').forEach(item => {
+      document.querySelectorAll('.treeBranch').forEach(item => {
         item.addEventListener('mouseenter', () => updateLineHover(item, true));
         item.addEventListener('mouseleave', () => updateLineHover(item, false))})};
 
@@ -196,9 +196,6 @@
 
     //SHOW TECH DETAILS
     function showTechDetails(tech, group, techItem) {
-      document.getElementById('techTree').classList.add('freeze');
-      techItem.classList.add('hovered');
-
     const techpopup = document.getElementById('techPopup'); //techEra
 
 function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, override) {
@@ -308,10 +305,9 @@ function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, overrid
 
     const popup = document.getElementById('techPopup');
     popup.style.display = 'inline-flex';
-    popup.style.flexDirection = 'column';
     isPopupOpen = true;
     selectedTechItem = techItem;
-    document.body.classList.add('no-hover');
+    selectedTechItem.classList.add('no-hover');
     selectedTechItem.classList.add('hovered');
   }
     function closePopup() {

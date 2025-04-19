@@ -16,6 +16,7 @@
   }
   #techPopup {
     display: none;
+    flex-direction: column;
     position: fixed;
     top: 1%;
     left: 50%;
@@ -56,7 +57,7 @@
     width: 160px;
     height: 40px;
   }
-  .treeBranch:hover, .treeBranch:active  {
+  .hovered .treeBranch {
     background-color: #aaffff;
     border:medium solid cyan;
     transition: background-color 0.3s, border 0.3s;
@@ -89,12 +90,8 @@
     z-index: 2;
     transition: background-color 0.3s, border-color 0.3s;
   }
-  .no-hover .techboxitem {
+  .no-hover .treeBranch {
     pointer-events: none;
-  }
-  .no-hover .techboxitem.hovered, .no-hover .line-hovered {
-    background-color: #aaffff;
-    border-color: cyan;
   }
   .close-btn {
     border: medium solid blue;
