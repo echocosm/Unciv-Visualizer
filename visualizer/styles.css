@@ -1,8 +1,17 @@
-    body {
+  body {
     font-family: "Roboto", system-ui;
     font-style: normal;
     margin:0;
   }
+  #indexBar {
+    height: 80px;
+    width: 100%;
+    background-color: rgba(255, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5;
+  }  
   #techTree {
     display: flex;
     justify-content: flex-start;
@@ -10,6 +19,7 @@
     background-color: white;
     position: relative;
     pointer-events: auto;
+    margin-top: 80px;
   }
   #techTree.freeze {
     pointer-events: none;
@@ -57,17 +67,11 @@
     width: 160px;
     height: 40px;
   }
-  .hovered .treeBranch {
-    background-color: #aaffff;
-    border:medium solid cyan;
-    transition: background-color 0.3s, border 0.3s;
-    text-shadow: 2px 2px 1px cyan;
-  }
   .techboxitem {
-    border: medium solid blue;
-    background-color: #72bcd3;
+    border: solid;
+    border-width: 3px;
     margin: 5px;
-    padding: 1px;
+    padding: 0px;
     border-radius: 5px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -76,6 +80,19 @@
     align-items: center;
     z-index: 3;
   }
+  .techboxitem:hover {
+    background-color: #aaffff;
+    border:medium solid cyan;
+    transition: background-color 0.3s, border 0.3s;
+    text-shadow: 2px 2px 1px cyan;
+  }
+  .techboxitem.hover-lock {
+    background-color: #aaffff;
+    border: medium solid cyan;
+    transition: background-color 0.3s, border 0.3s;
+    text-shadow: 2px 2px 1px cyan;
+  }
+  
   .line {
     position: absolute;
     background-color: blue;
@@ -94,7 +111,8 @@
     pointer-events: none;
   }
   .close-btn {
-    border: medium solid blue;
+    border: solid blue;
+    border-width: 3px;
     background-color: #72bcd3;
     border-radius: 5px;
     margin: 5px 5px;
@@ -153,8 +171,7 @@
     justify-content: space-between; 
     flex-direction: row; margin: 0px; 
     padding: 0px; 
-    background-color: 
-    transparent; 
+    background-color: transparent; 
     border-color: transparent; 
     box-shadow: none}
   /* === QUOTE === */
@@ -167,52 +184,49 @@
     overflow-wrap: break-word;
     text-align: center;}
 
-
-
-  /* === NEGATIVE === */
-  .negative-style-token { border-color: black; background-color: white; }
-
-  /* === SCIENCE === */
-  .science-style-box   { border-color: blue; background-color: #72bcd3; }
-  .science-style-token { border-color: blue; background-color: white; }
-  .science-style-text  { border-color: white; background-color: transparent; }
-
-  /* === BLUE === */
-  .blue-style-box   { border-color: blue; background-color: #72bcd3; }
-  .blue-style-token { border-color: blue; background-color: #72bcd3; }
-  .blue-style-text  { color: black; background-color: transparent; }
-
-  /* === YELLOW (Brighter) === */
-  .yellow-style-box   { border-color: #f1c40f; background-color: #fff9c4; }
-  .yellow-style-token { border-color: #f1c40f; background-color: #fff9c4; }
-  .yellow-style-text  { color: #b38f00; }
-
-  /* === ORANGE === */
-  .orange-style-box   { border-color: #ff7f0e; background-color: #ffe5cc; }
-  .orange-style-token { border-color: #ff7f0e; background-color: #ffe5cc; }
-  .orange-style-text  { color: #cc6600; }
-
-  /* === PURPLE === */
-  .purple-style-box   { border-color: #7e3ff2; background-color: #ebd9ff; }
-  .purple-style-token { border-color: #7e3ff2; background-color: #ebd9ff; }
-  .purple-style-text  { color: #4b179c; }
-
-  /* === RED === */
-  .red-style-box   { border-color: #d72f2f; background-color: #ffd6d6; }
-  .red-style-token { border-color: #d72f2f; background-color: #ffd6d6; }
-  .red-style-text  { color: #a11a1a; }
-
-  /* === GREEN === */
-  .green-style-box   { border-color: #2f9e44; background-color: #d8f5e0; }
-  .green-style-token { border-color: #2f9e44; background-color: #d8f5e0; }
-  .green-style-text  { color: #1c6b2c; }
-
-  /* === GREY === */
-  .grey-style-box   { border-color: #6c757d; background-color: #e9ecef; }
-  .grey-style-token { border-color: #6c757d; background-color: #e9ecef; }
-  .grey-style-text  { color: #343a40; }
-
-
+    [class$="-style-box"],[class$="-style-token"]{border-style:solid}
+    [class$="-style-box"]:hover,[class$="-style-box"].hover-lock,[class$="-style-token"]:hover,[class$="-style-token"].hover-lock{border:medium solid;text-shadow:2px 2px 1px}
+    [class$="-style-text"]:hover,[class$="-style-text"].hover-lock{text-shadow:1px 1px 0}
+    
+    .blue-style-box,.blue-style-token,.science-style-box{border-color:blue;background:#72bcd3}
+    .blue-style-box:hover,.blue-style-box.hover-lock,.blue-style-token:hover,.blue-style-token.hover-lock,.science-style-box:hover,.science-style-box.hover-lock{background:#aaffff;border-color:cyan;text-shadow-color:cyan}
+    .blue-style-text{color:black;background:transparent}
+    .blue-style-text:hover,.blue-style-text.hover-lock{text-shadow-color:cyan}
+    
+    .yellow-style-box,.yellow-style-token{border-color:#f1c40f;background:#fff9c4}
+    .yellow-style-box:hover,.yellow-style-box.hover-lock,.yellow-style-token:hover,.yellow-style-token.hover-lock{background:#fff176;border-color:#f1c40f;text-shadow-color:#f1c40f}
+    .yellow-style-text{color:#b38f00}
+    .yellow-style-text:hover,.yellow-style-text.hover-lock{text-shadow-color:#f1c40f}
+    
+    .orange-style-box,.orange-style-token{border-color:#ff7f0e;background:#ffe5cc}
+    .orange-style-box:hover,.orange-style-box.hover-lock,.orange-style-token:hover,.orange-style-token.hover-lock{background:#ffd099;border-color:#ff7f0e;text-shadow-color:#ff7f0e}
+    .orange-style-text{color:#cc6600}
+    .orange-style-text:hover,.orange-style-text.hover-lock{text-shadow-color:#ff7f0e}
+    
+    .purple-style-box,.purple-style-token{border-color:#7e3ff2;background:#ebd9ff}
+    .purple-style-box:hover,.purple-style-box.hover-lock,.purple-style-token:hover,.purple-style-token.hover-lock{background:#dab6ff;border-color:#7e3ff2;text-shadow-color:#7e3ff2}
+    .purple-style-text{color:#4b179c}
+    .purple-style-text:hover,.purple-style-text.hover-lock{text-shadow-color:#7e3ff2}
+    
+    .red-style-box,.red-style-token{border-color:#d72f2f;background:#ffd6d6}
+    .red-style-box:hover,.red-style-box.hover-lock,.red-style-token:hover,.red-style-token.hover-lock{background:#ffb3b3;border-color:#d72f2f;text-shadow-color:#d72f2f}
+    .red-style-text{color:#a11a1a}
+    .red-style-text:hover,.red-style-text.hover-lock{text-shadow-color:#d72f2f}
+    
+    .green-style-box,.green-style-token{border-color:#2f9e44;background:#d8f5e0}
+    .green-style-box:hover,.green-style-box.hover-lock,.green-style-token:hover,.green-style-token.hover-lock{background:#bdf2cd;border-color:#2f9e44;text-shadow-color:#2f9e44}
+    .green-style-text{color:#1c6b2c}
+    .green-style-text:hover,.green-style-text.hover-lock{text-shadow-color:#2f9e44}
+    
+    .grey-style-box,.grey-style-token{border-color:#6c757d;background:#e9ecef}
+    .grey-style-box:hover,.grey-style-box.hover-lock,.grey-style-token:hover,.grey-style-token.hover-lock{background:#dee2e6;border-color:#6c757d;text-shadow-color:#6c757d}
+    .grey-style-text{color:#343a40}
+    .grey-style-text:hover,.grey-style-text.hover-lock{text-shadow-color:#6c757d}
+    
+    .negative-style-token{border-color:black;background:#fff}
+    .science-style-token{border-color:blue;background:#fff}
+    .science-style-text{border-color:white;background:transparent}
+    
 
   /***** Index styling *****/
 

@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
+    <div id="indexBar"></div>
     <div id="techTree"></div>
     <div id="techPopup"></div>
 
@@ -22,7 +23,7 @@
 
     async function createTechTree() {
       const container = document.getElementById('techTree');
-      container.innerHTML = '';
+      //container.innerHTML = '';
       document.body.style.overflowX = 'hidden';
 
       let lastEra = "", eraHeaderGroup, eraColCont, positionTop, isLightBlue = true;
@@ -46,9 +47,10 @@
 
         for (const tech of group.techs || []) {
           await delay(1)
-          techItem=createTechItem('TechIcons',tech.name,tech.name,'blue',column,(tech.row*50)-50,null,null,'blue'); //#72bcd3
-          techItem.classList.add('treeBranch');
-          techItem.addEventListener('click', () => showTechDetails(tech, group, techItem));
+          const item = createTechItem('TechIcons', tech.name, tech.name, 'blue', column, (tech.row * 50) - 50, null, null, 'blue');
+          item.classList.add('treeBranch');
+          item.addEventListener('click', () => showTechDetails(tech, group, item));
+
         }
         eraColCont.appendChild(column);
       }
@@ -59,10 +61,17 @@
     };
 
     function drawLineBetweenTechs(techItem1, techItem2) {
+      const style = getComputedStyle(document.querySelector('.techboxitem')); 
+      const paddingTop = parseInt(style.paddingTop, 10);
+      const paddingBottom = parseInt(style.paddingBottom, 10);
+      const borderTop = parseInt(style.borderTopWidth, 10);
+      const borderBottom = parseInt(style.borderBottomWidth, 10);
+      const marginTop = parseInt(getComputedStyle(document.getElementById('techTree')).marginTop, 10);
+      const height = 2+paddingTop + paddingBottom + borderTop + borderBottom - marginTop;
+
       if (techItem1 && techItem2) {
-        const height = 2*parseInt(getComputedStyle(document.querySelector('.techboxitem')).padding, 10);
         const [rect1, rect2] = [techItem1.getBoundingClientRect(), techItem2.getBoundingClientRect()];
-        const [startX, startY, endX, endY] = [
+        const [sx, sy, ex, ey] = [
           rect1.left + rect1.width / 2, (rect1.top+height) - (rect1.height / 2), 
           rect2.left + rect2.width / 2, (rect2.top+height) - (rect2.height / 2)
         ];
@@ -73,16 +82,16 @@
           Object.assign(line.style, style);
           line.dataset.connectedTech = connectedTech;
           document.querySelector('.techColCont').appendChild(line)};
-        if (Math.abs(startY - endY) < 10) {
-          createLine({ left: `${Math.min(startX, endX)}px`, top: `${startY}px`, width: `${Math.abs(endX - startX)}px`});
+        if (Math.abs(sy - ey) < 10) {
+          createLine({ left: `${Math.min(sx, ex)}px`, top: `${sy}px`, width: `${Math.abs(ex - sx)}px`});
         } else {
-          const halfwayX = (Math.abs(endX - startX) / 2), verticalHeight = Math.abs(endY - startY);
-          const verticalDirection = (startY > endY) ? -1 : 1;
-          createLine({left:`${startX}px`,top:`${startY}px`,width:`${halfwayX-12}px`});
-          createLine({left:`${startX+halfwayX-8}px`,height:'23px',transform:`rotate(${verticalDirection===-1?'45':'-45'}deg)`,top:`${startY-(verticalDirection===-1?17:2)}px`});
-          createLine({left:`${startX+halfwayX}px`,top:`${16+(verticalDirection===-1?endY:startY)}px`,height:`${verticalHeight-28}px`});
-          createLine({left:`${startX+halfwayX+7}px`,height:'23px',transform:`rotate(${verticalDirection===-1?'45':'-45'}deg)`,top:`${endY-(verticalDirection===-1?2:17)}px`});
-          createLine({left:`${startX+halfwayX+15}px`,top:`${endY}px`,width:`${halfwayX-15}px`});
+          const hx = (Math.abs(ex - sx) / 2), vh = Math.abs(ey - sy);
+          const vd = (sy > ey) ? -1 : 1;
+          createLine({left:`${sx}px`,top:`${sy}px`,width:`${hx-12}px`});
+          createLine({left:`${sx+hx-8}px`,height:'23px',transform:`rotate(${vd===-1?'45':'-45'}deg)`,top:`${sy-(vd===-1?17:2)}px`});
+          createLine({left:`${sx+hx}px`,top:`${16+(vd===-1?ey:sy)}px`,height:`${vh-28}px`});
+          createLine({left:`${sx+hx+7}px`,height:'23px',transform:`rotate(${vd===-1?'45':'-45'}deg)`,top:`${ey-(vd===-1?2:17)}px`});
+          createLine({left:`${sx+hx+15}px`,top:`${ey}px`,width:`${hx-15}px`});
         }}};
 
     const drawLinesForAllTechs = () => {
@@ -140,7 +149,7 @@
       const techItem = document.createElement('div');
       techItem.classList.add('techboxitem');
       if (positionTop !== null) {
-        Object.assign(techItem.style, { position: 'absolute', top: `${positionTop}px` });
+        Object.assign(techItem.style, { position: 'absolute', top: `${positionTop+0}px` });
         techItem.setAttribute('data-tech-name', techName)};
 
       const createElement = (tag, className, innerHTML = "") => {
@@ -195,15 +204,19 @@
         Object.entries(styles).forEach(([k, v]) => el.style[k] = v)}};
 
     //SHOW TECH DETAILS
-    function showTechDetails(tech, group, techItem) {
+    function showTechDetails(tech, group, item) {
+    isPopupOpen = true;
+    selectedTechItem = item
+    selectedTechItem.classList.add('hover-lock');
+    document.getElementById('techTree').classList.add('freeze');
     const techpopup = document.getElementById('techPopup'); //techEra
+    techpopup.style.display = 'inline-flex';
 
 function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, override) {
   function getBorderColorFromClass(className) {
-    for (const sheet of document.styleSheets) {
-      for (const rule of sheet.cssRules || []) {
-        if (rule.selectorText === '.' + className + '-style-box') {
-          return rule.style.borderColor}}}return null};
+  const targetSelector = `.${className}-style-box`;
+  for (const sheet of document.styleSheets){try {for (const rule of sheet.cssRules || []) {
+    if (rule.selectorText && rule.selectorText.includes(targetSelector)){return rule.style.borderColor || null}}}catch(e){continue}}return null};
 
   const colorize = getBorderColorFromClass(styleGroup);
   const bar = createTechItem("OtherIcons", null, barLabel, styleGroup, techpopup, null, { width: '100%' }, "box", colorize);
@@ -262,9 +275,9 @@ function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, overrid
       createTechItem("TechIcons",prerequisiteName,prerequisiteName,"blue",backward,null,null,null,"blue")});
     const forward = createTechItem("OtherIcons",null,"ForwardArrow","blue",fbholder,null,null,"box","blue");
     techsData.forEach(techGroup => {
-    techGroup.techs?.forEach(techItem => {
-    if (techItem.prerequisites?.includes(tech.name)) {
-      createTechItem("TechIcons",techItem.name,techItem.name,"blue",forward,null,null,null,"blue")
+    techGroup.techs?.forEach(listing => {
+    if (listing.prerequisites?.includes(tech.name)) {
+      createTechItem("TechIcons",listing.name,listing.name,"blue",forward,null,null,null,"blue")
       }})});
     //name
     createTechItem("TechIcons",tech.name,tech.name,"blue",techpopup,null,{fontSize: '36px'},"text","blue");
@@ -302,19 +315,11 @@ function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, overrid
       iconType: "ImprovementIcons",
       barLabel: "Improvements",
       styleGroup: "green"});
-
-    const popup = document.getElementById('techPopup');
-    popup.style.display = 'inline-flex';
-    isPopupOpen = true;
-    selectedTechItem = techItem;
-    selectedTechItem.classList.add('no-hover');
-    selectedTechItem.classList.add('hovered');
   }
     function closePopup() {
       document.getElementById('techPopup').style.display = 'none';
       isPopupOpen = false;
-      selectedTechItem?.classList.remove('hovered');
-      document.body.classList.remove('no-hover');
+      selectedTechItem?.classList.remove('hover-lock');
       document.querySelectorAll('.line').forEach(line => line.classList.remove('line-hovered'));
       document.getElementById('techTree').classList.remove('freeze');
     }
