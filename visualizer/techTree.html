@@ -47,7 +47,7 @@
 
         for (const tech of group.techs || []) {
           await delay(1)
-          const item = createTechItem('TechIcons', tech.name, tech.name, 'blue', column, (tech.row * 50) - 50, null, null, 'blue');
+          const item = createBadge('TechIcons', tech.name, tech.name, 'blue', column, (tech.row * 50) - 50, null, null, 'blue', true);
           item.classList.add('treeBranch');
           item.addEventListener('click', () => showTechDetails(tech, group, item));
 
@@ -61,7 +61,7 @@
     };
 
     function drawLineBetweenTechs(techItem1, techItem2) {
-      const style = getComputedStyle(document.querySelector('.techboxitem')); 
+      const style = getComputedStyle(document.querySelector('.badgeBox')); 
       const paddingTop = parseInt(style.paddingTop, 10);
       const paddingBottom = parseInt(style.paddingBottom, 10);
       const borderTop = parseInt(style.borderTopWidth, 10);
@@ -98,8 +98,8 @@
       techsData.forEach(group => {
         group.techs?.forEach(tech => {
           tech.prerequisites?.forEach(prerequisiteName => {
-          const techItem1 = document.querySelector(`.techboxitem[data-tech-name="${prerequisiteName}"]`);
-          const techItem2 = document.querySelector(`.techboxitem[data-tech-name="${tech.name}"]`);
+          const techItem1 = document.querySelector(`.badgeBox[data-tech-name="${prerequisiteName}"]`);
+          const techItem2 = document.querySelector(`.badgeBox[data-tech-name="${tech.name}"]`);
             if (techItem1 && techItem2){drawLineBetweenTechs(techItem1, techItem2)}})})})};
 
     function addHoverEffectToTechItems() {
@@ -145,13 +145,15 @@
       if (styles && Object.keys(styles).length) {
         Object.entries(styles).forEach(([k, v]) => el.style[k] = v)}};
 
-    function createTechItem(folderKeyword, techName, imageName, style = "blue", parentContainer = null, positionTop = null, styleOptions = {}, target = null, colorize = null) {
+    function createBadge(folderKeyword, techName, imageName, style = "blue", parentContainer = null, positionTop = null, styleOptions = {}, target = null, colorize = null, clickable = null) {
       const techItem = document.createElement('div');
-      techItem.classList.add('techboxitem');
+      techItem.classList.add('badgeBox');
       if (positionTop !== null) {
         Object.assign(techItem.style, { position: 'absolute', top: `${positionTop+0}px` });
         techItem.setAttribute('data-tech-name', techName)};
-
+      if (clickable == null) {
+        Object.assign(techItem.style, { pointerEvents: 'none' });
+        techItem.setAttribute('data-tech-name', techName)};
       const createElement = (tag, className, innerHTML = "") => {
         const el = document.createElement(tag);
         el.classList.add(className);
@@ -167,18 +169,18 @@
 
       let imageContainer;
       if (imageName) {
-        imageContainer = createElement('div', 'token-container');
+        imageContainer = createElement('div', 'badgeToken');
 
         getImageByNameFromFolder(folderKeyword, `${imageName}.png`).then(base64 => {
           if (colorize) {
             tintImageBase64(base64, colorize, (tintedBase64) => {
-              const img = createElement('img', 'tech-icon');
+              const img = createElement('img', 'badgeIcon');
               img.src = tintedBase64;
               imageContainer.appendChild(img);
               techItem.appendChild(imageContainer);
             });
           } else {
-            const img = createElement('img', 'tech-icon');
+            const img = createElement('img', 'badgeIcon');
             img.src = `data:image/png;base64,${base64}`;
             imageContainer.appendChild(img);
             techItem.appendChild(imageContainer);
@@ -191,7 +193,7 @@
       }
 
       if (techName) {
-        const nameEl = createElement('div', 'tech-name', techName);
+        const nameEl = createElement('div', 'badgeText', techName);
         techItem.appendChild(nameEl);
         if (target === "text") applyInlineStyle(nameEl, styleOptions);
         addStyleClass(nameEl, style, "text")};
@@ -219,7 +221,7 @@ function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, overrid
     if (rule.selectorText && rule.selectorText.includes(targetSelector)){return rule.style.borderColor || null}}}catch(e){continue}}return null};
 
   const colorize = getBorderColorFromClass(styleGroup);
-  const bar = createTechItem("OtherIcons", null, barLabel, styleGroup, techpopup, null, { width: '100%' }, "box", colorize);
+  const bar = createBadge("OtherIcons", null, barLabel, styleGroup, techpopup, null, { width: '100%' }, "box", colorize);
 
   if (relatedItems.length) {
     const groups = {}, replacedSet = new Set(relatedItems.map(i => i.replaces).filter(Boolean));
@@ -227,16 +229,16 @@ function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, overrid
     relatedItems.forEach(i => {
       const isUnique = !!i.uniqueTo, isReplaced = replacedSet.has(i.name);
       const parent = isUnique
-        ? createTechItem(null, null, null, styleGroup, bar, null, null, null)
+        ? createBadge(null, null, null, styleGroup, bar, null, null, null)
         : bar;
       const item = !isReplaced
-        ? createTechItem(iconType, i.name, override || i.name, styleGroup, parent, null, null, null, colorize)
+        ? createBadge(iconType, i.name, override || i.name, styleGroup, parent, null, null, null, colorize)
         : null;
 
       if (isUnique) {
         const n = nationsData.find(n => n.name === i.uniqueTo);
         if (n) {
-          createTechItem("NationIcons", i.uniqueTo, i.uniqueTo, null, parent, null, {
+          createBadge("NationIcons", i.uniqueTo, i.uniqueTo, null, parent, null, {
             backgroundColor: `rgb(${n.outerColor?.join(',')})`,
             borderColor: `rgb(${n.innerColor?.join(',')})`,
             color: `rgb(${n.innerColor?.join(',')})`}, "token2", `rgb(${n.innerColor?.join(',')})`)}};
@@ -244,12 +246,12 @@ function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, overrid
       if (i.replaces) {
         if (!groups[i.replaces]) {
           groups[i.replaces] = {
-            replaced: createTechItem(iconType, i.replaces, i.replaces, styleGroup, bar, null, null, null, colorize),
+            replaced: createBadge(iconType, i.replaces, i.replaces, styleGroup, bar, null, null, null, colorize),
             replacers: []}}
         groups[i.replaces].replacers.push(isUnique ? parent : item)}});
 
     Object.values(groups).forEach(g => {
-      const c = createTechItem(null, null, null, styleGroup, bar, null, {
+      const c = createBadge(null, null, null, styleGroup, bar, null, {
         display: 'inline-block',
         flexWrap: 'wrap',
         flexDirection: 'row'
@@ -265,25 +267,25 @@ function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, overrid
     close.onclick = closePopup;
     techpopup.appendChild(close)
 
-    const costera = createTechItem(null,null,null,"blank",techpopup);
-    createTechItem("EmojiIcons", group.era || "~","Turn","blue",costera,null,null,null,"blue");
-    createTechItem("EmojiIcons", group.techCost || "~","Science","science",costera);
+    const costera = createBadge(null,null,null,"blank",techpopup);
+    createBadge("EmojiIcons", group.era || "~","Turn","blue",costera,null,null,null,"blue");
+    createBadge("EmojiIcons", group.techCost || "~","Science","science",costera);
 
-    const fbholder = createTechItem(null,null,null,"blank",techpopup);
-    const backward = createTechItem("OtherIcons",null,"BackArrow","blue",fbholder,null,{flexDirection:'row'},"box","blue");
+    const fbholder = createBadge(null,null,null,"blank",techpopup);
+    const backward = createBadge("OtherIcons",null,"BackArrow","blue",fbholder,null,{flexDirection:'row'},"box","blue");
       tech.prerequisites?.forEach(prerequisiteName => {
-      createTechItem("TechIcons",prerequisiteName,prerequisiteName,"blue",backward,null,null,null,"blue")});
-    const forward = createTechItem("OtherIcons",null,"ForwardArrow","blue",fbholder,null,null,"box","blue");
+      createBadge("TechIcons",prerequisiteName,prerequisiteName,"blue",backward,null,null,null,"blue")});
+    const forward = createBadge("OtherIcons",null,"ForwardArrow","blue",fbholder,null,null,"box","blue");
     techsData.forEach(techGroup => {
     techGroup.techs?.forEach(listing => {
     if (listing.prerequisites?.includes(tech.name)) {
-      createTechItem("TechIcons",listing.name,listing.name,"blue",forward,null,null,null,"blue")
+      createBadge("TechIcons",listing.name,listing.name,"blue",forward,null,null,null,"blue")
       }})});
     //name
-    createTechItem("TechIcons",tech.name,tech.name,"blue",techpopup,null,{fontSize: '36px'},"text","blue");
+    createBadge("TechIcons",tech.name,tech.name,"blue",techpopup,null,{fontSize: '36px'},"text","blue");
 
     //quote
-    createTechItem("TechIcons",tech.quote,null,"quote",techpopup,null,null,null);
+    createBadge("TechIcons",tech.quote,null,"quote",techpopup,null,null,null);
 
     const uniqueObjects = tech.uniques?.map(unique => ({ name: unique })) || [];
     createInfoBar({
