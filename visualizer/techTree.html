@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <div id="indexBar"></div>
-    <div id="techTree"></div>
-    <div id="techPopup"></div>
 
-    <script>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div id="indexBar"></div>
+  <div id="techTree"></div>
+  <div id="techPopup"></div>
+
+  <script>
 
     let isPopupOpen = false, selectedTechItem = null;
 
@@ -19,7 +21,7 @@
         ].map(f => fetch(`jsons/${f}.json`).then(r => r.json())));
     }
 
-    function delay(ms) {return new Promise(resolve => setTimeout(resolve, ms))};
+    function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)) };
 
     async function createTechTree() {
       const container = document.getElementById('techTree');
@@ -31,18 +33,18 @@
       for (const group of techsData) {
         await delay(1)
         if (group.era !== lastEra) {
-          eraHeaderGroup = document.createElement('div') 
-          const eraHeader=Object.assign(document.createElement('div'),{className:'techEraHead'});
+          eraHeaderGroup = document.createElement('div')
+          const eraHeader = Object.assign(document.createElement('div'), { className: 'techEraHead' });
           eraHeader.innerText = group.era;
           eraHeader.style.backgroundColor = isLightBlue ? 'lightblue' : '#c0eaf7';
           eraHeaderGroup.appendChild(eraHeader);
-          eraColCont=Object.assign(document.createElement('div'),{className:'techColCont'});
+          eraColCont = Object.assign(document.createElement('div'), { className: 'techColCont' });
           eraHeaderGroup.appendChild(eraColCont);
           container.appendChild(eraHeaderGroup);
           lastEra = group.era;
           isLightBlue = !isLightBlue;
         }
-        const column = Object.assign(document.createElement('div'),{className:'techCol'});
+        const column = Object.assign(document.createElement('div'), { className: 'techCol' });
         column.style.backgroundColor = isLightBlue ? 'lightblue' : '#c0eaf7';
 
         for (const tech of group.techs || []) {
@@ -55,25 +57,25 @@
         eraColCont.appendChild(column);
       }
       await delay(1);
-      drawLinesForAllTechs();
+      drawAllLines();
       addHoverEffectToTechItems();
       document.body.style.overflowX = 'auto';  // Restore default horizontal scrolling
     };
 
-    function drawLineBetweenTechs(techItem1, techItem2) {
-      const style = getComputedStyle(document.querySelector('.badgeBox')); 
+    function drawLine(techItem1, techItem2) {
+      const style = getComputedStyle(document.querySelector('.badgeBox'));
       const paddingTop = parseInt(style.paddingTop, 10);
       const paddingBottom = parseInt(style.paddingBottom, 10);
       const borderTop = parseInt(style.borderTopWidth, 10);
       const borderBottom = parseInt(style.borderBottomWidth, 10);
       const marginTop = parseInt(getComputedStyle(document.getElementById('techTree')).marginTop, 10);
-      const height = 2+paddingTop + paddingBottom + borderTop + borderBottom - marginTop;
+      const height = 2 + paddingTop + paddingBottom + borderTop + borderBottom - marginTop;
 
       if (techItem1 && techItem2) {
         const [rect1, rect2] = [techItem1.getBoundingClientRect(), techItem2.getBoundingClientRect()];
         const [sx, sy, ex, ey] = [
-          rect1.left + rect1.width / 2, (rect1.top+height) - (rect1.height / 2), 
-          rect2.left + rect2.width / 2, (rect2.top+height) - (rect2.height / 2)
+          rect1.left + rect1.width / 2, (rect1.top + height) - (rect1.height / 2),
+          rect2.left + rect2.width / 2, (rect2.top + height) - (rect2.height / 2)
         ];
         const connectedTech = `${techItem1.dataset.techName}-${techItem2.dataset.techName}`;
         const createLine = (style) => {
@@ -81,38 +83,51 @@
           line.classList.add('line');
           Object.assign(line.style, style);
           line.dataset.connectedTech = connectedTech;
-          document.querySelector('.techColCont').appendChild(line)};
+          document.querySelector('.techColCont').appendChild(line)
+        };
         if (Math.abs(sy - ey) < 10) {
-          createLine({ left: `${Math.min(sx, ex)}px`, top: `${sy}px`, width: `${Math.abs(ex - sx)}px`});
+          createLine({ left: `${Math.min(sx, ex)}px`, top: `${sy}px`, width: `${Math.abs(ex - sx)}px` });
         } else {
           const hx = (Math.abs(ex - sx) / 2), vh = Math.abs(ey - sy);
           const vd = (sy > ey) ? -1 : 1;
-          createLine({left:`${sx}px`,top:`${sy}px`,width:`${hx-12}px`});
-          createLine({left:`${sx+hx-8}px`,height:'23px',transform:`rotate(${vd===-1?'45':'-45'}deg)`,top:`${sy-(vd===-1?17:2)}px`});
-          createLine({left:`${sx+hx}px`,top:`${16+(vd===-1?ey:sy)}px`,height:`${vh-28}px`});
-          createLine({left:`${sx+hx+7}px`,height:'23px',transform:`rotate(${vd===-1?'45':'-45'}deg)`,top:`${ey-(vd===-1?2:17)}px`});
-          createLine({left:`${sx+hx+15}px`,top:`${ey}px`,width:`${hx-15}px`});
-        }}};
+          createLine({ left: `${sx}px`, top: `${sy}px`, width: `${hx - 12}px` });
+          createLine({ left: `${sx + hx - 8}px`, height: '23px', transform: `rotate(${vd === -1 ? '45' : '-45'}deg)`, top: `${sy - (vd === -1 ? 17 : 2)}px` });
+          createLine({ left: `${sx + hx}px`, top: `${16 + (vd === -1 ? ey : sy)}px`, height: `${vh - 28}px` });
+          createLine({ left: `${sx + hx + 7}px`, height: '23px', transform: `rotate(${vd === -1 ? '45' : '-45'}deg)`, top: `${ey - (vd === -1 ? 2 : 17)}px` });
+          createLine({ left: `${sx + hx + 15}px`, top: `${ey}px`, width: `${hx - 15}px` });
+        }
+      }
+    };
 
-    const drawLinesForAllTechs = () => {
+    const drawAllLines = () => {
       techsData.forEach(group => {
         group.techs?.forEach(tech => {
           tech.prerequisites?.forEach(prerequisiteName => {
-          const techItem1 = document.querySelector(`.badgeBox[data-tech-name="${prerequisiteName}"]`);
-          const techItem2 = document.querySelector(`.badgeBox[data-tech-name="${tech.name}"]`);
-            if (techItem1 && techItem2){drawLineBetweenTechs(techItem1, techItem2)}})})})};
+            const techItem1 = document.querySelector(`.badgeBox[data-tech-name="${prerequisiteName}"]`);
+            const techItem2 = document.querySelector(`.badgeBox[data-tech-name="${tech.name}"]`);
+            if (techItem1 && techItem2) { drawLine(techItem1, techItem2) }
+          })
+        })
+      })
+    };
 
     function addHoverEffectToTechItems() {
       document.querySelectorAll('.treeBranch').forEach(item => {
         item.addEventListener('mouseenter', () => updateLineHover(item, true));
-        item.addEventListener('mouseleave', () => updateLineHover(item, false))})};
+        item.addEventListener('mouseleave', () => updateLineHover(item, false))
+      })
+    };
 
     function updateLineHover(item, isHover) {
       if (!isPopupOpen) {
         const hoveredTechName = item.dataset.techName;
         document.querySelectorAll('.line').forEach(line => {
           if (line.dataset.connectedTech.includes(hoveredTechName)) {
-            line.classList.toggle('line-hovered', isHover)}})}};
+            line.classList.toggle('hover-lock', isHover)
+          }
+        })
+      }
+    };
 
     async function getImageByNameFromFolder(folder, name) {
       try {
@@ -121,212 +136,262 @@
         return getImageAsBase64(await res.blob());
       } catch (err) {
         console.error("Image fetch error:", err);
-        throw err}};
+        throw err
+      }
+    };
 
     function getImageAsBase64(blob) {
       return new Promise((res, rej) => {
         const r = new FileReader();
         r.onloadend = () => res(r.result.split(',')[1]);
         r.onerror = rej;
-        r.readAsDataURL(blob)})}
+        r.readAsDataURL(blob)
+      })
+    }
 
     function tintImageBase64(b64, color, cb) {
       const i = new Image(); i.src = `data:image/png;base64,${b64}`;
       i.onload = () => {
-        const c = Object.assign(document.createElement('canvas'), {width: i.width, height: i.height}),
-              x = c.getContext('2d');
+        const c = Object.assign(document.createElement('canvas'), { width: i.width, height: i.height }),
+          x = c.getContext('2d');
         x.drawImage(i, 0, 0);
         x.globalCompositeOperation = "source-in";
         x.fillStyle = color;
         x.fillRect(0, 0, c.width, c.height);
-        cb(c.toDataURL("image/png"))}};
+        cb(c.toDataURL("image/png"))
+      }
+    };
 
-    function applyInlineStyle(el, styles) {
-      if (styles && Object.keys(styles).length) {
-        Object.entries(styles).forEach(([k, v]) => el.style[k] = v)}};
-
-    function createBadge(folderKeyword, techName, imageName, style = "blue", parentContainer = null, positionTop = null, styleOptions = {}, target = null, colorize = null, clickable = null) {
+    function createBadge(folderKeyword, techName, imageName, style = "blue", parent = null, top = null, styles = {}, target = null, colorize = null, clickable = null, link = null) {
       const techItem = document.createElement('div');
-      techItem.classList.add('badgeBox');
-      if (positionTop !== null) {
-        Object.assign(techItem.style, { position: 'absolute', top: `${positionTop+0}px` });
-        techItem.setAttribute('data-tech-name', techName)};
-      if (clickable == null) {
-        Object.assign(techItem.style, { pointerEvents: 'none' });
-        techItem.setAttribute('data-tech-name', techName)};
-      const createElement = (tag, className, innerHTML = "") => {
+      techItem.className = 'badgeBox';
+      if (top !== null) Object.assign(techItem.style, { position: 'absolute', top: `${top}px` });
+
+      if (!clickable) techItem.style.pointerEvents = 'none';
+      if (techName) techItem.setAttribute('data-tech-name', techName);
+
+      const createEl = (tag, className, html = '') => {
         const el = document.createElement(tag);
-        el.classList.add(className);
-        if (innerHTML) el.innerHTML = innerHTML;
-        return el};
+        el.className = className;
+        if (html) el.innerHTML = html;
+        return el;
+      };
 
-      const addStyleClass = (el, styleKeyword, target) => {
-        const className = `${styleKeyword}-style-${target}`;
-        el.classList.add(className)};
+      const addStyleClass = (el, suffix) => el.classList.add(`${style}-style-${suffix}`);
+      if (["box", "token2"].includes(target)) applyInlineStyle(techItem, styles);
+      addStyleClass(techItem, 'box');
 
-      if (["box","token2"].includes(target)){applyInlineStyle(techItem, styleOptions)};
-      addStyleClass(techItem, style, "box");
-
-      let imageContainer;
       if (imageName) {
-        imageContainer = createElement('div', 'badgeToken');
-
+        const imageContainer = createEl('div', 'badgeToken');
         getImageByNameFromFolder(folderKeyword, `${imageName}.png`).then(base64 => {
-          if (colorize) {
-            tintImageBase64(base64, colorize, (tintedBase64) => {
-              const img = createElement('img', 'badgeIcon');
-              img.src = tintedBase64;
-              imageContainer.appendChild(img);
-              techItem.appendChild(imageContainer);
-            });
-          } else {
-            const img = createElement('img', 'badgeIcon');
-            img.src = `data:image/png;base64,${base64}`;
+          const appendImage = (img) => {
             imageContainer.appendChild(img);
             techItem.appendChild(imageContainer);
+            if (["token", "token2"].includes(target)) applyInlineStyle(imageContainer, styles);
+            addStyleClass(imageContainer, 'token');
+          };
+
+          if (colorize) {
+            const wrapper = createEl('div', `${style}-style-box hover-lock`);
+            const temp = createEl('div', `${style}-style-token`);
+            wrapper.appendChild(temp);
+            document.body.appendChild(wrapper);
+            const borderColor = getComputedStyle(temp).borderColor || "#ff0000";
+            document.body.removeChild(wrapper);
+
+            tintImageBase64(base64, colorize, (defaultTint) => {
+              tintImageBase64(base64, borderColor, (hoverTint) => {
+                const img = createEl('div', 'badgeIcon');
+                img.style.setProperty('--default-img', `url(${defaultTint})`);
+                img.style.setProperty('--hover-img', `url(${hoverTint})`);
+                appendImage(img);
+              });
+            });
+          } else {
+            const img = createEl('img', 'badgeIcon');
+            img.src = `data:image/png;base64,${base64}`;
+            appendImage(img);
           }
-          if (["token", "token2"].includes(target)) {
-            applyInlineStyle(imageContainer, styleOptions);
-          }
-          addStyleClass(imageContainer, style, "token");
         });
       }
 
       if (techName) {
-        const nameEl = createElement('div', 'badgeText', techName);
+        const nameEl = createEl('div', 'badgeText', techName);
+        if (target === "text") applyInlineStyle(nameEl, styles);
+        addStyleClass(nameEl, 'text');
         techItem.appendChild(nameEl);
-        if (target === "text") applyInlineStyle(nameEl, styleOptions);
-        addStyleClass(nameEl, style, "text")};
+      }
 
-      parentContainer?.appendChild(techItem);
-      return techItem};
+      if (link) {
+        Object.assign(techItem.style, { cursor: 'pointer' });
+        techItem.setAttribute('role', 'link');
+        techItem.setAttribute('tabindex', '0');
+
+        const openLink = () => window.location.href = link;
+        techItem.addEventListener('click', openLink);
+        techItem.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') openLink();
+        });
+      }
+
+      parent?.appendChild(techItem);
+      return techItem;
+    }
 
     function applyInlineStyle(el, styles) {
       if (styles && Object.keys(styles).length) {
-        Object.entries(styles).forEach(([k, v]) => el.style[k] = v)}};
+        Object.entries(styles).forEach(([k, v]) => el.style[k] = v)
+      }
+    };
 
-    //SHOW TECH DETAILS
     function showTechDetails(tech, group, item) {
-    isPopupOpen = true;
-    selectedTechItem = item
-    selectedTechItem.classList.add('hover-lock');
-    document.getElementById('techTree').classList.add('freeze');
-    const techpopup = document.getElementById('techPopup'); //techEra
-    techpopup.style.display = 'inline-flex';
+      isPopupOpen = true;
+      selectedTechItem = item
+      selectedTechItem.classList.add('hover-lock');
+      document.getElementById('techTree').classList.add('freeze');
+      const techpopup = document.getElementById('techPopup'); //techEra
+      techpopup.style.display = 'inline-flex';
 
-function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, override) {
-  function getBorderColorFromClass(className) {
-  const targetSelector = `.${className}-style-box`;
-  for (const sheet of document.styleSheets){try {for (const rule of sheet.cssRules || []) {
-    if (rule.selectorText && rule.selectorText.includes(targetSelector)){return rule.style.borderColor || null}}}catch(e){continue}}return null};
+      function createInfoBar({ relatedItems, iconType, barLabel, styleGroup }, override) {
+        function getBorderColorFromClass(className) {
+          const targetSelector = `.${className}-style-box`;
+          for (const sheet of document.styleSheets) {
+            try {
+              for (const rule of sheet.cssRules || []) {
+                if (rule.selectorText && rule.selectorText.includes(targetSelector)) { return rule.style.borderColor || null }
+              }
+            } catch (e) { continue }
+          } return null
+        };
 
-  const colorize = getBorderColorFromClass(styleGroup);
-  const bar = createBadge("OtherIcons", null, barLabel, styleGroup, techpopup, null, { width: '100%' }, "box", colorize);
+        const colorize = getBorderColorFromClass(styleGroup);
+        const bar = createBadge("OtherIcons", null, barLabel, styleGroup, techpopup, null, { width: '100%' }, "box", colorize);
 
-  if (relatedItems.length) {
-    const groups = {}, replacedSet = new Set(relatedItems.map(i => i.replaces).filter(Boolean));
+        if (relatedItems.length) {
+          const groups = {}, replacedSet = new Set(relatedItems.map(i => i.replaces).filter(Boolean));
 
-    relatedItems.forEach(i => {
-      const isUnique = !!i.uniqueTo, isReplaced = replacedSet.has(i.name);
-      const parent = isUnique
-        ? createBadge(null, null, null, styleGroup, bar, null, null, null)
-        : bar;
-      const item = !isReplaced
-        ? createBadge(iconType, i.name, override || i.name, styleGroup, parent, null, null, null, colorize)
-        : null;
+          relatedItems.forEach(i => {
+            const isUnique = !!i.uniqueTo, isReplaced = replacedSet.has(i.name);
+            const parent = isUnique
+              ? createBadge(null, null, null, styleGroup, bar, null, null, null)
+              : bar;
+            const item = !isReplaced
+              ? createBadge(iconType, i.name, override || i.name, styleGroup, parent, null, null, null, colorize)
+              : null;
 
-      if (isUnique) {
-        const n = nationsData.find(n => n.name === i.uniqueTo);
-        if (n) {
-          createBadge("NationIcons", i.uniqueTo, i.uniqueTo, null, parent, null, {
-            backgroundColor: `rgb(${n.outerColor?.join(',')})`,
-            borderColor: `rgb(${n.innerColor?.join(',')})`,
-            color: `rgb(${n.innerColor?.join(',')})`}, "token2", `rgb(${n.innerColor?.join(',')})`)}};
+            if (isUnique) {
+              const n = nationsData.find(n => n.name === i.uniqueTo);
+              if (n) {
+                createBadge("NationIcons", i.uniqueTo, i.uniqueTo, null, parent, null, {
+                  backgroundColor: `rgb(${n.outerColor?.join(',')})`,
+                  borderColor: `rgb(${n.innerColor?.join(',')})`,
+                  color: `rgb(${n.innerColor?.join(',')})`
+                }, "token2", `rgb(${n.innerColor?.join(',')})`)
+              }
+            };
 
-      if (i.replaces) {
-        if (!groups[i.replaces]) {
-          groups[i.replaces] = {
-            replaced: createBadge(iconType, i.replaces, i.replaces, styleGroup, bar, null, null, null, colorize),
-            replacers: []}}
-        groups[i.replaces].replacers.push(isUnique ? parent : item)}});
+            if (i.replaces) {
+              if (!groups[i.replaces]) {
+                groups[i.replaces] = {
+                  replaced: createBadge(iconType, i.replaces, i.replaces, styleGroup, bar, null, null, null, colorize),
+                  replacers: []
+                }
+              }
+              groups[i.replaces].replacers.push(isUnique ? parent : item)
+            }
+          });
 
-    Object.values(groups).forEach(g => {
-      const c = createBadge(null, null, null, styleGroup, bar, null, {
-        display: 'inline-block',
-        flexWrap: 'wrap',
-        flexDirection: 'row'
-      }, "box");
-      c.appendChild(g.replaced);
-      g.replacers.forEach(r => c.appendChild(r))})}};
+          Object.values(groups).forEach(g => {
+            const c = createBadge(null, null, null, styleGroup, bar, null, {
+              display: 'inline-block',
+              flexWrap: 'wrap',
+              flexDirection: 'row'
+            }, "box");
+            c.appendChild(g.replaced);
+            g.replacers.forEach(r => c.appendChild(r))
+          })
+        }
+      };
 
-    //cost and era
-    techpopup.innerHTML = '';
-    const close = document.createElement('button');
-    close.className = 'close-btn';
-    close.textContent = 'X';  
-    close.onclick = closePopup;
-    techpopup.appendChild(close)
+      //cost and era
+      techpopup.innerHTML = '';
 
-    const costera = createBadge(null,null,null,"blank",techpopup);
-    createBadge("EmojiIcons", group.era || "~","Turn","blue",costera,null,null,null,"blue");
-    createBadge("EmojiIcons", group.techCost || "~","Science","science",costera);
+      const close = createBadge('OtherIcons', 'Close', 'Close', 'grey', techpopup, null, { width: '100%' }, null, 'grey', true);
+      close.onclick = closePopup;
 
-    const fbholder = createBadge(null,null,null,"blank",techpopup);
-    const backward = createBadge("OtherIcons",null,"BackArrow","blue",fbholder,null,{flexDirection:'row'},"box","blue");
+      const costera = createBadge(null, null, null, "blank", techpopup);
+      createBadge("EmojiIcons", group.era || "~", "Turn", "blue", costera, null, null, null, "blue");
+      createBadge("EmojiIcons", group.techCost || "~", "Science", "science", costera);
+
+      const fbholder = createBadge(null, null, null, "blank", techpopup);
+      const backward = createBadge("OtherIcons", null, "BackArrow", "blue", fbholder, null, { flexDirection: 'row' }, "box", "blue");
       tech.prerequisites?.forEach(prerequisiteName => {
-      createBadge("TechIcons",prerequisiteName,prerequisiteName,"blue",backward,null,null,null,"blue")});
-    const forward = createBadge("OtherIcons",null,"ForwardArrow","blue",fbholder,null,null,"box","blue");
-    techsData.forEach(techGroup => {
-    techGroup.techs?.forEach(listing => {
-    if (listing.prerequisites?.includes(tech.name)) {
-      createBadge("TechIcons",listing.name,listing.name,"blue",forward,null,null,null,"blue")
-      }})});
-    //name
-    createBadge("TechIcons",tech.name,tech.name,"blue",techpopup,null,{fontSize: '36px'},"text","blue");
+        createBadge("TechIcons", prerequisiteName, prerequisiteName, "blue", backward, null, null, null, "blue")
+      });
+      const forward = createBadge("OtherIcons", null, "ForwardArrow", "blue", fbholder, null, null, "box", "blue");
+      techsData.forEach(techGroup => {
+        techGroup.techs?.forEach(listing => {
+          if (listing.prerequisites?.includes(tech.name)) {
+            createBadge("TechIcons", listing.name, listing.name, "blue", forward, null, null, null, "blue")
+          }
+        })
+      });
+      //name
+      createBadge("TechIcons", tech.name, tech.name, "blue", techpopup, null, { fontSize: '36px' }, "text", "blue");
 
-    //quote
-    createBadge("TechIcons",tech.quote,null,"quote",techpopup,null,null,null);
+      //quote
+      createBadge("TechIcons", tech.quote, null, "quote", techpopup, null, null, null);
 
-    const uniqueObjects = tech.uniques?.map(unique => ({ name: unique })) || [];
-    createInfoBar({
-      relatedItems: uniqueObjects,
-      iconType: "UniqueIcons",
-      barLabel: "ExclamationMark",
-      styleGroup: "yellow"}, "Fallback");
-    const relatedBuildings = buildingsData.filter(b => b.requiredTech === tech.name && !b.isWonder && !b.isNationalWonder);
-    createInfoBar({
-      relatedItems: relatedBuildings,
-      iconType: "BuildingIcons",
-      barLabel: "Cities",
-      styleGroup: "grey"});
-    const relatedWonders = buildingsData.filter(b => b.requiredTech === tech.name && (b.isWonder || b.isNationalWonder));
-    createInfoBar({
-      relatedItems: relatedWonders,
-      iconType: "BuildingIcons",
-      barLabel: "Wonders",
-      styleGroup: "purple"});
-    const relatedUnits = unitsData.filter(unit => unit.requiredTech === tech.name);
-    createInfoBar({
-      relatedItems: relatedUnits,
-      iconType: "UnitIcons",
-      barLabel: "Shield",
-      styleGroup: "red"});
-    const relatedTileImprovements = tileImprovementsData.filter(tile => tile.techRequired === tech.name);
-    createInfoBar({
-      relatedItems: relatedTileImprovements,
-      iconType: "ImprovementIcons",
-      barLabel: "Improvements",
-      styleGroup: "green"});
-  }
+      const uniqueObjects = tech.uniques?.map(unique => ({ name: unique })) || [];
+      createInfoBar({
+        relatedItems: uniqueObjects,
+        iconType: "UniqueIcons",
+        barLabel: "ExclamationMark",
+        styleGroup: "yellow"
+      }, "Fallback");
+      const relatedBuildings = buildingsData.filter(b => b.requiredTech === tech.name && !b.isWonder && !b.isNationalWonder);
+      createInfoBar({
+        relatedItems: relatedBuildings,
+        iconType: "BuildingIcons",
+        barLabel: "Cities",
+        styleGroup: "grey"
+      });
+      const relatedWonders = buildingsData.filter(b => b.requiredTech === tech.name && (b.isWonder || b.isNationalWonder));
+      createInfoBar({
+        relatedItems: relatedWonders,
+        iconType: "BuildingIcons",
+        barLabel: "Wonders",
+        styleGroup: "purple"
+      });
+      const relatedUnits = unitsData.filter(unit => unit.requiredTech === tech.name);
+      createInfoBar({
+        relatedItems: relatedUnits,
+        iconType: "UnitIcons",
+        barLabel: "Shield",
+        styleGroup: "red"
+      });
+      const relatedTileImprovements = tileImprovementsData.filter(tile => tile.techRequired === tech.name);
+      createInfoBar({
+        relatedItems: relatedTileImprovements,
+        iconType: "ImprovementIcons",
+        barLabel: "Improvements",
+        styleGroup: "green"
+      });
+    }
+
     function closePopup() {
       document.getElementById('techPopup').style.display = 'none';
       isPopupOpen = false;
       selectedTechItem?.classList.remove('hover-lock');
-      document.querySelectorAll('.line').forEach(line => line.classList.remove('line-hovered'));
+      document.querySelectorAll('.line').forEach(line => line.classList.remove('hover-lock'));
       document.getElementById('techTree').classList.remove('freeze');
     }
+
     loadJsonFiles().then(() => {
-    createTechTree()});
+      createTechTree()
+    });
+
   </script>
-  </body>
+</body>
+
 </html>

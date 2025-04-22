@@ -1,251 +1,433 @@
-  body {
-    font-family: "Roboto", system-ui;
-    font-style: normal;
-    margin:0;
-  }
-  #indexBar {
-    height: 80px;
-    width: 100%;
-    background-color: rgba(255, 0, 0, 0.6);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 5;
-  }  
-  #techTree {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    background-color: white;
-    position: relative;
-    pointer-events: auto;
-    margin-top: 80px;
-  }
-  #techTree.freeze {
-    pointer-events: none;
-  }
-  #techPopup {
-    display: none;
-    flex-direction: column;
-    position: fixed;
-    top: 1%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60vw;
-    padding: 20px 44px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    height: 90vh;
-    overflow-x:hidden;
-    overflow-y: auto;
-    z-index: 10;
-    align-items: center;
-    transition: background-color 0.3s, border-color 0.3s;
-  }
-  .techEraHead {
-    font-size: 28px;
-    font-weight: bold;
-    text-align: center;
-  }
-  .techColCont {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-  }
-  .techCol {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px;
-    min-width: 200px;
-    position: relative;
-    height: 100vh;
-  }
-  .treeBranch {
-    width: 160px;
-    height: 40px;
-  }
-  .badgeBox {
-    margin: 5px;
-    padding: 0;
-    border-radius: 5px;
-    border: 3px solid; /* color set via class */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: left;
-    align-items: center;
-    z-index: 3;
-    transition: background-color 0.3s, border 0.3s;
-  }
-  
-  /* Hover pass-through to children */
-  .badgeBox:hover .badgeToken,
-  .badgeBox.hover-lock .badgeToken {
-    border-width: medium;
-  }
-  
-  .badgeBox:hover .badgeText,
-  .badgeBox.hover-lock .badgeText {
-    text-shadow: 1px 1px 0;
-  }
-  
-  /* Child elements (structure only) */
-  .badgeToken {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    border: 2px solid white; /* default, overridden by style class */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin: 5px;
-  }
-  
-  .badgeIcon {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .badgeText {
-    display: flex;
-    margin: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    align-items: flex-start;
-    font-size: 12px;
-  }
-  
-  .line {
-    position: absolute;
-    background-color: blue;
-    width: 4px;
-    height: 4px;
-    z-index: 1;
-    border-radius: 2px;
-    transition: background-color 0.3s, border-color 0.3s;
-  }
-  .line-hovered {
-    background-color: cyan;
-    z-index: 2;
-    transition: background-color 0.3s, border-color 0.3s;
-  }
-  .no-hover .treeBranch {
-    pointer-events: none;
-  }
-  .close-btn {
-    border: solid blue;
-    border-width: 3px;
-    background-color: #72bcd3;
-    border-radius: 5px;
-    margin: 5px 5px;
-    padding: 10px;
-    font-size: 16px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    z-index: 10;
-    cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s;
-  }
-  .close-btn:hover {
-    background-color: #aaffff;
-    border-color: cyan;
-    text-shadow: 2px 2px 1px cyan;
-    transition: background-color 0.3s, border-color 0.3s;
-  }
-  .blank {
-    display: flex;
-    flex-direction: row;
-    margin: 0px ;
-    padding: 0px;
-    text-align: center;
-    align-items: center;
-  }
-  /* === BLANK === */
-  .blank-style-box   {
-    width: 100%; 
-    justify-content: space-between; 
-    flex-direction: row; margin: 0px; 
-    padding: 0px; 
-    background-color: transparent; 
-    border-color: transparent; 
-    box-shadow: none}
-  /* === QUOTE === */
-  .quote-style-box   { flex-wrap: wrap; width: 100%; justify-content: center; }
-  .quote-style-text {
-    font-style: italic;
-    font-size: 18px;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    text-align: center;}
+html,
+body {
+  font-family: "Roboto", system-ui;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: black;
+  font-family: Arial, sans-serif;
+}
 
-    [class$="-style-box"],[class$="-style-token"]{border-style:solid}
-    [class$="-style-box"]:hover,[class$="-style-box"].hover-lock,[class$="-style-token"].hover-lock{border:medium}
-    [class$="-style-text"].hover-lock{text-shadow:1px 1px 0}
-    
-    .blue-style-box,.blue-style-token,.science-style-box{border-color:blue;background:#72bcd3}
-    .blue-style-box:hover,.blue-style-box.hover-lock,.blue-style-token.hover-lock{background:#aaffff;border-color:cyan}
-    .blue-style-text{color:blue;background:transparent}
-    
-    .yellow-style-box,.yellow-style-token{border-color:#f1c40f;background:#fff9c4}
-    .yellow-style-box:hover,.yellow-style-box.hover-lock,.yellow-style-token.hover-lock{background:#fff176;border-color:#f1c40f}
-    .yellow-style-text{color:#b38f00}
-    
-    .orange-style-box,.orange-style-token{border-color:#ff7f0e;background:#ffe5cc}
-    .orange-style-box:hover,.orange-style-box.hover-lock,.orange-style-token.hover-lock{background:#ffd099;border-color:#ff7f0e}
-    .orange-style-text{color:#cc6600}
-    
-    .purple-style-box,.purple-style-token{border-color:#7e3ff2;background:#ebd9ff}
-    .purple-style-box:hover,.purple-style-box.hover-lock,.purple-style-token.hover-lock{background:#dab6ff;border-color:#7e3ff2}
-    .purple-style-text{color:#4b179c}
-    
-    .red-style-box,.red-style-token{border-color:#d72f2f;background:#ffd6d6}
-    .red-style-box:hover,.red-style-box.hover-lock,.red-style-token.hover-lock{background:#ffb3b3;border-color:#d72f2f}
-    .red-style-text{color:#a11a1a}
-    
-    .green-style-box,.green-style-token{border-color:#2f9e44;background:#d8f5e0}
-    .green-style-box:hover,.green-style-box.hover-lock,.green-style-token.hover-lock{background:#bdf2cd;border-color:#2f9e44}
-    .green-style-text{color:#1c6b2c}
-    
-    .grey-style-box,.grey-style-token{border-color:#6c757d;background:#e9ecef}
-    .grey-style-box:hover,.grey-style-box.hover-lock,.grey-style-token.hover-lock{background:#dee2e6;border-color:#6c757d}
-    .grey-style-text{color:#343a40}
-    
-    .negative-style-token{border-color:black;background:#fff}
-    .science-style-token{border-color:blue;background:#fff}
-    .science-style-text{border-color:white;background:transparent}
-    
+#indexBar {
+  display: flex;
+  flex-direction: row;
+  height: 80px;
+  width: 100%;
+  background-color: rgba(255, 0, 0, 1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;
+}
 
-  /***** Index styling *****/
+.content {
+  padding-top: 80px;
+  height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+  overflow: hidden;
+}
+
+.pulse-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pulse-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  animation: pulse 3s infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.dim {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 2;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+#techTree {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  background-color: white;
+  position: relative;
+  pointer-events: auto;
+  margin-top: 80px;
+}
+
+#techTree.freeze {
+  pointer-events: none;
+}
+
+#techPopup {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  top: 1%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60vw;
+  padding: 20px 44px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  height: 90vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 10;
+  align-items: center;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.techEraHead {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.techColCont {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+
+.techCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  min-width: 200px;
+  position: relative;
+  height: 100vh;
+}
+
+.treeBranch {
+  width: 160px;
+  height: 40px;
+}
+
+.badgeBox {
+  margin: 5px;
+  padding: 0;
+  border-radius: 5px;
+  border: 3px solid;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: left;
+  align-items: center;
+  z-index: 3;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.badgeBox:hover .badgeToken,
+.badgeBox.hover-lock .badgeToken {
+  border-width: medium;
+}
+
+.badgeToken {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 2px solid white;
+  /* default, overridden by style class */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 5px;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.badgeBox:hover .badgeText,
+.badgeBox.hover-lock .badgeText {
+  text-shadow: 1px 1px 0;
+}
+
+.badgeText {
+  display: flex;
+  margin: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-items: flex-start;
+  font-size: 12px;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.badgeBox:hover .badgeIcon,
+.badgeBox.hover-lock .badgeIcon {
+  background-image: var(--hover-img);
+}
+
+.badgeIcon {
+  width: 20px;
+  height: 20px;
+  background-image: var(--default-img);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+}
+
+.line {
+  position: absolute;
+  background-color: black;
+  width: 4px;
+  height: 4px;
+  z-index: 1;
+  border-radius: 2px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.line.hover-lock {
+  z-index: 2;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.no-hover .treeBranch {
+  pointer-events: none;
+}
+
+/* === BLANK === */
+.blank-style-box {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: row;
+  margin: 0px;
+  padding: 0px;
+  margin: 0px;
+  background-color: transparent;
+  border-color: transparent;
+  text-align: center;
+  align-items: center;
+  box-shadow: none
+}
+
+/* === QUOTE === */
+.quote-style-box {
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+}
+
+.quote-style-text {
+  font-style: italic;
+  font-size: 18px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center;
+}
+
+[class$="-style-box"],
+[class$="-style-token"] {
+  border-style: solid
+}
+
+[class$="-style-box"]:hover,
+[class$="-style-box"].hover-lock,
+[class$="-style-box"]:hover [class$="-style-token"],
+[class$="-style-box"].hover-lock [class$="-style-token"] {
+  border: medium
+}
+
+[class$="-style-box"]:hover [class$="-style-text"],
+[class$="-style-box"].hover-lock [class$="-style-text"] {
+  font-style: bold
+}
+
+.blue-style-box,
+.blue-style-token,
+.science-style-box {
+  background: #72bcd3;
+  border-color: blue
+}
+
+.blue-style-box:hover,
+.blue-style-box.hover-lock,
+.blue-style-box:hover .blue-style-token,
+.blue-style-box.hover-lock .blue-style-token {
+  background: white;
+  border-color: cyan
+}
+
+.blue-style-text {
+  color: blue;
+  background: transparent
+}
+
+.yellow-style-box,
+.yellow-style-token {
+  border-color: #f1c40f;
+  background: #fff9c4
+}
+
+.yellow-style-box:hover,
+.yellow-style-box.hover-lock,
+.yellow-style-token.hover-lock {
+  background: #fff176;
+  border-color: #f1c40f
+}
+
+.yellow-style-text {
+  color: #b38f00
+}
+
+.orange-style-box,
+.orange-style-token {
+  border-color: #ff7f0e;
+  background: #ffe5cc
+}
+
+.orange-style-box:hover,
+.orange-style-box.hover-lock,
+.orange-style-token.hover-lock {
+  background: #ffd099;
+  border-color: #ff7f0e
+}
+
+.orange-style-text {
+  color: #cc6600
+}
+
+.purple-style-box,
+.purple-style-token {
+  border-color: #7e3ff2;
+  background: #ebd9ff
+}
+
+.purple-style-box:hover,
+.purple-style-box.hover-lock,
+.purple-style-token.hover-lock {
+  background: #dab6ff;
+  border-color: #7e3ff2
+}
+
+.purple-style-text {
+  color: #4b179c
+}
+
+.red-style-box,
+.red-style-token {
+  border-color: #d72f2f;
+  background: #ffd6d6
+}
+
+.red-style-box:hover,
+.red-style-box.hover-lock,
+.red-style-token.hover-lock {
+  background: #ffb3b3;
+  border-color: #d72f2f
+}
+
+.red-style-text {
+  color: #a11a1a
+}
+
+.green-style-box,
+.green-style-token {
+  border-color: #2f9e44;
+  background: #d8f5e0
+}
+
+.green-style-box:hover,
+.green-style-box.hover-lock,
+.green-style-token.hover-lock {
+  background: #bdf2cd;
+  border-color: #2f9e44
+}
+
+.green-style-text {
+  color: #1c6b2c
+}
+
+.grey-style-box,
+.grey-style-token {
+  border-color: #6c757d;
+  background: #e9ecef;
+}
+
+.grey-style-box:hover,
+.grey-style-box.hover-lock,
+.grey-style-token.hover-lock {
+  background: #dee2e6;
+  border-color: #6c757d;
+}
+
+.grey-style-text {
+  color: #343a40
+}
+
+.negative-style-token {
+  border-color: black;
+  background: #fff
+}
+
+.science-style-token {
+  border-color: blue;
+  background: #fff
+}
+
+.science-style-text {
+  border-color: white;
+  background: transparent
+}
+
+
+/***** Index styling *****/
 
 
 #index-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin-top: 100px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin-top: 100px;
 }
+
 h1 {
-    font-size: 3em;
+  font-size: 3em;
 }
+
 .button {
-    background-color: rgb(88, 88, 216);
-    border: none;
-    color: white;
-    padding: 20px 40px;
-    font-size: 2em;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: background-color 0.3s;
+  background-color: rgb(88, 88, 216);
+  border: none;
+  color: white;
+  padding: 20px 40px;
+  font-size: 2em;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background-color 0.3s;
 }
+
 .button:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
 
