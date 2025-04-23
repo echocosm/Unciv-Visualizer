@@ -249,14 +249,15 @@ body {
 
 [class$="-style-box"],
 [class$="-style-token"] {
-  border-style: solid
+  border-style: solid;
+  border-width: medium
 }
 
 [class$="-style-box"]:hover,
 [class$="-style-box"].hover-lock,
 [class$="-style-box"]:hover [class$="-style-token"],
 [class$="-style-box"].hover-lock [class$="-style-token"] {
-  border: medium
+  border-width: medium
 }
 
 [class$="-style-box"]:hover [class$="-style-text"],
@@ -267,7 +268,7 @@ body {
 .blue-style-box,
 .blue-style-token,
 .science-style-box {
-  background: #72bcd3;
+  background: black;
   border-color: blue
 }
 
@@ -275,12 +276,17 @@ body {
 .blue-style-box.hover-lock,
 .blue-style-box:hover .blue-style-token,
 .blue-style-box.hover-lock .blue-style-token {
-  background: white;
+  background: rgb(0, 50, 50);
   border-color: cyan
 }
 
 .blue-style-text {
   color: blue;
+  background: transparent
+}
+
+.blue-style-box:hover .blue-style-text {
+  color: cyan;
   background: transparent
 }
 
@@ -400,35 +406,3 @@ body {
   border-color: white;
   background: transparent
 }
-
-
-/***** Index styling *****/
-
-
-#index-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin-top: 100px;
-}
-
-h1 {
-  font-size: 3em;
-}
-
-.button {
-  background-color: rgb(88, 88, 216);
-  border: none;
-  color: white;
-  padding: 20px 40px;
-  font-size: 2em;
-  cursor: pointer;
-  border-radius: 10px;
-  transition: background-color 0.3s;
-}
-
-.button:hover {
-  background-color: #45a049;
-}
-
-
-/**** end index ******/

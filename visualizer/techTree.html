@@ -162,80 +162,51 @@
       }
     };
 
-    function createBadge(folderKeyword, techName, imageName, style = "blue", parent = null, top = null, styles = {}, target = null, colorize = null, clickable = null, link = null) {
-      const techItem = document.createElement('div');
-      techItem.className = 'badgeBox';
-      if (top !== null) Object.assign(techItem.style, { position: 'absolute', top: `${top}px` });
+    function createBadge(folder, name, img, style = "blue", parent = null, top = null, styles = {}, target = null, color = null, clickable = null, link = null) {
+      const el = (t, c, h = '') => Object.assign(document.createElement(t), { className: c, innerHTML: h });
+      const cls = (e, s) => e.classList.add(`${style}-style-${s}`);
+      const box = el('div', 'badgeBox');
+      if (top !== null) Object.assign(box.style, { position: 'absolute', top: `${top}px` });
+      if (!clickable) box.style.pointerEvents = 'none';
+      if (name) box.setAttribute('data-tech-name', name);
+      if (["box", "token2"].includes(target)) applyInlineStyle(box, styles);
+      cls(box, 'box');
 
-      if (!clickable) techItem.style.pointerEvents = 'none';
-      if (techName) techItem.setAttribute('data-tech-name', techName);
-
-      const createEl = (tag, className, html = '') => {
-        const el = document.createElement(tag);
-        el.className = className;
-        if (html) el.innerHTML = html;
-        return el;
-      };
-
-      const addStyleClass = (el, suffix) => el.classList.add(`${style}-style-${suffix}`);
-      if (["box", "token2"].includes(target)) applyInlineStyle(techItem, styles);
-      addStyleClass(techItem, 'box');
-
-      if (imageName) {
-        const imageContainer = createEl('div', 'badgeToken');
-        getImageByNameFromFolder(folderKeyword, `${imageName}.png`).then(base64 => {
-          const appendImage = (img) => {
-            imageContainer.appendChild(img);
-            techItem.appendChild(imageContainer);
-            if (["token", "token2"].includes(target)) applyInlineStyle(imageContainer, styles);
-            addStyleClass(imageContainer, 'token');
-          };
-
-          if (colorize) {
-            const wrapper = createEl('div', `${style}-style-box hover-lock`);
-            const temp = createEl('div', `${style}-style-token`);
-            wrapper.appendChild(temp);
-            document.body.appendChild(wrapper);
-            const borderColor = getComputedStyle(temp).borderColor || "#ff0000";
-            document.body.removeChild(wrapper);
-
-            tintImageBase64(base64, colorize, (defaultTint) => {
-              tintImageBase64(base64, borderColor, (hoverTint) => {
-                const img = createEl('div', 'badgeIcon');
-                img.style.setProperty('--default-img', `url(${defaultTint})`);
-                img.style.setProperty('--hover-img', `url(${hoverTint})`);
-                appendImage(img);
-              });
-            });
+      if (img) {
+        const wrap = el('div', 'badgeToken');
+        getImageByNameFromFolder(folder, `${img}.png`).then(b64 => {
+          const add = i => { wrap.appendChild(i); box.appendChild(wrap); if (["token", "token2"].includes(target)) applyInlineStyle(wrap, styles); cls(wrap, 'token'); };
+          if (color) {
+            const t = el('div', `${style}-style-token`), w = el('div', `${style}-style-box hover-lock`);
+            w.appendChild(t); document.body.appendChild(w);
+            const b = getComputedStyle(t).borderColor || "#f00"; document.body.removeChild(w);
+            tintImageBase64(b64, color, d => tintImageBase64(b64, b, h => {
+              const i = el('div', 'badgeIcon');
+              i.style.setProperty('--default-img', `url(${d})`);
+              i.style.setProperty('--hover-img', `url(${h})`);
+              add(i);
+            }));
           } else {
-            const img = createEl('img', 'badgeIcon');
-            img.src = `data:image/png;base64,${base64}`;
-            appendImage(img);
+            const i = el('img', 'badgeIcon'); i.src = `data:image/png;base64,${b64}`; add(i);
           }
         });
       }
 
-      if (techName) {
-        const nameEl = createEl('div', 'badgeText', techName);
-        if (target === "text") applyInlineStyle(nameEl, styles);
-        addStyleClass(nameEl, 'text');
-        techItem.appendChild(nameEl);
+      if (name) {
+        const txt = el('div', 'badgeText', name);
+        if (target === "text") applyInlineStyle(txt, styles);
+        cls(txt, 'text'); box.appendChild(txt);
       }
 
       if (link) {
-        Object.assign(techItem.style, { cursor: 'pointer' });
-        techItem.setAttribute('role', 'link');
-        techItem.setAttribute('tabindex', '0');
-
-        const openLink = () => window.location.href = link;
-        techItem.addEventListener('click', openLink);
-        techItem.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') openLink();
-        });
+        Object.assign(box.style, { cursor: 'pointer' });
+        box.setAttribute('role', 'link'); box.setAttribute('tabindex', '0');
+        const go = () => window.location.href = link;
+        box.addEventListener('click', go); box.addEventListener('keydown', e => ["Enter", " "].includes(e.key) && go());
       }
 
-      parent?.appendChild(techItem);
-      return techItem;
+      parent?.appendChild(box);
+      return box;
     }
 
     function applyInlineStyle(el, styles) {
@@ -316,7 +287,7 @@
       //cost and era
       techpopup.innerHTML = '';
 
-      const close = createBadge('OtherIcons', 'Close', 'Close', 'grey', techpopup, null, { width: '100%' }, null, 'grey', true);
+      const close = createBadge('OtherIcons', null, 'Close', 'grey', techpopup, null, { width: '100%' }, null, 'grey', true);
       close.onclick = closePopup;
 
       const costera = createBadge(null, null, null, "blank", techpopup);
