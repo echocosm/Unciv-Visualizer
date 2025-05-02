@@ -32,44 +32,6 @@ body {
   overflow: hidden;
 }
 
-.pulse-wrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pulse-img {
-  max-width: 90vw;
-  max-height: 90vh;
-  animation: pulse 3s infinite;
-  position: relative;
-  z-index: 1;
-}
-
-.dim {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 2;
-  pointer-events: none;
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.85;
-  }
-
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-}
-
 #techTree {
   display: flex;
   justify-content: flex-start;
