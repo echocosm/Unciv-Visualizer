@@ -51,7 +51,10 @@ export async function createBadge(folder, name, img, style = "blue", parent = nu
   }
 
   addLinkBehavior(box, link);                              // >> HELPER 1.6: addLinkBehavior
-  parent?.appendChild(box);
+  if (parent instanceof Element) {
+    parent.appendChild(box);
+  }
+  
   return box;
 }
 // >> HELPER 1.1: createBaseBadgeBox

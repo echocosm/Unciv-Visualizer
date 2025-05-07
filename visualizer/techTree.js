@@ -36,10 +36,9 @@
 
         for (const tech of group.techs || []) {
           await delay(1)
-          const item = createBadge('TechIcons', tech.name, tech.name, 'blue', column, (tech.row * 50) - 50, null, null, 'blue', true);
+          const item = await createBadge('TechIcons', tech.name, tech.name, 'blue', column, (tech.row * 50) - 50, null, null, 'blue', true);
           item.classList.add('treeBranch');
           item.addEventListener('click', () => showTechDetails(tech, group, item));
-
         }
         eraColCont.appendChild(column);
       }
@@ -50,7 +49,7 @@
     };
 
     function drawLine(techItem1, techItem2) {
-      const style = getComputedStyle(document.querySelector('.badgeBox'));
+      const style = getComputedStyle(techItem1);
       const paddingTop = parseInt(style.paddingTop, 10);
       const paddingBottom = parseInt(style.paddingBottom, 10);
       const borderTop = parseInt(style.borderTopWidth, 10);
@@ -65,10 +64,14 @@
           rect2.left + rect2.width / 2, (rect2.top + height) - (rect2.height / 2)
         ];
         const connectedTech = `${techItem1.dataset.techName}-${techItem2.dataset.techName}`;
+        const lineColor = getComputedStyle(techItem1).borderColor;
         const createLine = (style) => {
           const line = document.createElement('div');
           line.classList.add('line');
-          Object.assign(line.style, style);
+          Object.assign(line.style, {
+            backgroundColor: lineColor, 
+            ...style});
+          console.log("style: "+ style.borderColor)
           line.dataset.connectedTech = connectedTech;
           document.querySelector('.techColCont').appendChild(line)
         };
@@ -116,91 +119,7 @@
       }
     };
 
-    async function getImageByNameFromFolder(folder, name) {
-      try {
-        const res = await fetch(`icons/${folder}/${name}`);
-        if (!res.ok) throw new Error(`Image not found: ${name}`);
-        return getImageAsBase64(await res.blob());
-      } catch (err) {
-        console.error("Image fetch error:", err);
-        throw err
-      }
-    };
-
-    function getImageAsBase64(blob) {
-      return new Promise((res, rej) => {
-        const r = new FileReader();
-        r.onloadend = () => res(r.result.split(',')[1]);
-        r.onerror = rej;
-        r.readAsDataURL(blob)
-      })
-    }
-
-    function tintImageBase64(b64, color, cb) {
-      const i = new Image(); i.src = `data:image/png;base64,${b64}`;
-      i.onload = () => {
-        const c = Object.assign(document.createElement('canvas'), { width: i.width, height: i.height }),
-          x = c.getContext('2d');
-        x.drawImage(i, 0, 0);
-        x.globalCompositeOperation = "source-in";
-        x.fillStyle = color;
-        x.fillRect(0, 0, c.width, c.height);
-        cb(c.toDataURL("image/png"))
-      }
-    };
-
-    function createBadge(folder, name, img, style = "blue", parent = null, top = null, styles = {}, target = null, color = null, clickable = null, link = null) {
-      const el = (t, c, h = '') => Object.assign(document.createElement(t), { className: c, innerHTML: h });
-      const cls = (e, s) => e.classList.add(`${style}-style-${s}`);
-      const box = el('div', 'badgeBox');
-      if (top !== null) Object.assign(box.style, { position: 'absolute', top: `${top}px` });
-      if (!clickable) box.style.pointerEvents = 'none';
-      if (name) box.setAttribute('data-tech-name', name);
-      if (["box", "token2"].includes(target)) applyInlineStyle(box, styles);
-      cls(box, 'box');
-
-      if (img) {
-        const wrap = el('div', 'badgeToken');
-        getImageByNameFromFolder(folder, `${img}.png`).then(b64 => {
-          const add = i => { wrap.appendChild(i); box.appendChild(wrap); if (["token", "token2"].includes(target)) applyInlineStyle(wrap, styles); cls(wrap, 'token'); };
-          if (color) {
-            const t = el('div', `${style}-style-token`), w = el('div', `${style}-style-box hover-lock`);
-            w.appendChild(t); document.body.appendChild(w);
-            const b = getComputedStyle(t).borderColor || "#f00"; document.body.removeChild(w);
-            tintImageBase64(b64, color, d => tintImageBase64(b64, b, h => {
-              const i = el('div', 'badgeIcon');
-              i.style.setProperty('--default-img', `url(${d})`);
-              i.style.setProperty('--hover-img', `url(${h})`);
-              add(i);
-            }));
-          } else {
-            const i = el('img', 'badgeIcon'); i.src = `data:image/png;base64,${b64}`; add(i);
-          }
-        });
-      }
-
-      if (name) {
-        const txt = el('div', 'badgeText', name);
-        if (target === "text") applyInlineStyle(txt, styles);
-        cls(txt, 'text'); box.appendChild(txt);
-      }
-
-      if (link) {
-        Object.assign(box.style, { cursor: 'pointer' });
-        box.setAttribute('role', 'link'); box.setAttribute('tabindex', '0');
-        const go = () => window.location.href = link;
-        box.addEventListener('click', go); box.addEventListener('keydown', e => ["Enter", " "].includes(e.key) && go());
-      }
-
-      parent?.appendChild(box);
-      return box;
-    }
-
-    function applyInlineStyle(el, styles) {
-      if (styles && Object.keys(styles).length) {
-        Object.entries(styles).forEach(([k, v]) => el.style[k] = v)
-      }
-    };
+    import { createBadge } from "./index.js";
 
     function showTechDetails(tech, group, item) {
       isPopupOpen = true;
@@ -260,14 +179,16 @@
           });
 
           Object.values(groups).forEach(g => {
-            const c = createBadge(null, null, null, styleGroup, bar, null, {
+            createBadge(null, null, null, styleGroup, bar, null, {
               display: 'inline-block',
               flexWrap: 'wrap',
               flexDirection: 'row'
-            }, "box");
+            }, "box").then(c=>{
             c.appendChild(g.replaced);
             g.replacers.forEach(r => c.appendChild(r))
-          })
+          })})
+
+
         }
       };
 
@@ -286,7 +207,7 @@
       tech.prerequisites?.forEach(prerequisiteName => {
         createBadge("TechIcons", prerequisiteName, prerequisiteName, "blue", backward, null, null, null, "blue")
       });
-      const forward = createBadge("OtherIcons", null, "ForwardArrow", "blue", fbholder, null, null, "box", "blue");
+      const forward = createBadge("OtherIcons", null, "ForwardArrow", "blue", fbholder, null, {}, "box", "blue");
       techsData.forEach(techGroup => {
         techGroup.techs?.forEach(listing => {
           if (listing.prerequisites?.includes(tech.name)) {
